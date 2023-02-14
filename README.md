@@ -1,1 +1,1 @@
-|:--:|## DesktopGPT|  |
+<h1 style="font-size: 48pt; text-align: center;">DesktopGPT</h1>
