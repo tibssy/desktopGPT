@@ -40,7 +40,7 @@ read -p "Do you want to install dependencies (y/n)? " choice
 if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
   # Check for Debian-based systems
   if which apt-get &> /dev/null; then
-    sudo apt-get update && sudo apt-get install -y tesseract-ocr
+    sudo apt-get update && sudo apt-get install -y xclip tesseract-ocr
     if dpkg-query -W -f='${Status}' "plasma-desktop" | grep -q "ok installed" &&
       dpkg-query -W -f='${Status}' "gnome-desktop-environment" | grep -q "ok installed"; then
       echo "KDE Plasma and GNOME are installed on this Debian-based system."
@@ -56,7 +56,7 @@ if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
     fi
   # Check for Arch-based systems
   elif which pacman &> /dev/null; then
-    sudo pacman -Sy && sudo pacman -S tesseract tesseract-data-eng
+    sudo pacman -Sy && sudo pacman -S xclip tesseract tesseract-data-eng
     if pacman -Q plasma-desktop &> /dev/null &&
       pacman -Q gnome-desktop &> /dev/null; then
       echo "KDE Plasma and GNOME are installed on this Arch-based system."
