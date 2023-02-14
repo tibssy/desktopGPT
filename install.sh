@@ -63,10 +63,10 @@ if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
       sudo pacman -S spectacle gnome-screenshot
     elif pacman -Q plasma-desktop &> /dev/null; then
       echo "KDE Plasma is installed on this Arch-based system."
-      sudo pacman -S spectacle gnome-screenshot
+      sudo pacman -S spectacle
     elif pacman -Q gnome-desktop &> /dev/null; then
       echo "GNOME is installed on this Arch-based system."
-      sudo pacman -S spectacle gnome-screenshot
+      sudo pacman -S gnome-screenshot
     else
       echo "Neither KDE Plasma nor GNOME is installed on this Arch-based system."
     fi
