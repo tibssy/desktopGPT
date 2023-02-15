@@ -11,7 +11,6 @@ get_package_manager() {
     echo "dnf"
   elif which pacman &> /dev/null; then
     echo "pacman"
-    python_dependencies="python-pip virtualenv"
   else
     echo "Unknown"
   fi
@@ -67,10 +66,10 @@ package_installer() {
   fi
 }
 
-python_dependencies=""
-python_dependencies_for_apt="python3-pip binutils python3-dbus xclip tesseract-ocr"
-python_dependencies_for_pacman="python-pip dbus-python xclip tesseract tesseract-data-eng"
-python_dependencies_for_dnf=""
+dependencies=""
+dependencies_for_apt="python3-pip binutils xclip tesseract-ocr"
+dependencies_for_pacman="python-pip xclip tesseract tesseract-data-eng"
+dependencies_for_dnf=""
 
 
 echo -e "\n\e[33m***** DesktopGPT Installer *****\e[0m\n\n"
@@ -81,21 +80,21 @@ echo -e "Package manager: \e[32m$package_manager_name\e[0m"
 
 # for apt
 if [ "$package_manager_name" == "apt" ]; then
-  python_dependencies=$python_dependencies_for_apt
+  dependencies=$dependencies_for_apt
 
 
 # For pacman
 elif [ "$package_manager_name" == "pacman" ]; then
-  python_dependencies=$python_dependencies_for_pacman
+  dependencies=$dependencies_for_pacman
 
 # For dnf
 elif [ "$package_manager_name" == "dnf" ]; then
-  python_dependencies=$python_dependencies_for_pacman
+  dependencies=$dependencies_for_pacman
 fi
 
 
 #
-not_installed=($(check_packages $python_dependencies))
+not_installed=($(check_packages $dependencies))
 if [ ${#not_installed[@]} -gt 0 ]; then
   print_not_installed ${not_installed[*]}
   echo -e "\n"

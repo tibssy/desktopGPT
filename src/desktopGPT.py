@@ -13,13 +13,32 @@ import os
 import sys
 import subprocess
 from configparser import ConfigParser
-import cv2
+from PIL import Image
 import numpy as np
 import pytesseract
 import requests
 import clipboard
-from plyer import notification
+from notifypy import Notify
 
+
+
+def send_notification(note):
+    """
+    Sends a desktop notification with the given title, message, and icon.
+
+    Args:
+        note (dict): A dictionary containing the keys "title", "message", and "icon".
+
+    Returns:
+        None
+    """
+
+    notification = Notify()
+    notification.application_name = "Desktop GPT"
+    notification.title = note["title"]
+    notification.message = note["message"]
+    notification.icon = f'{PATH}/img/{note["icon"]}.png'
+    notification.send(block=False)
 
 
 def post_request(**kwargs):
@@ -42,11 +61,7 @@ def post_request(**kwargs):
     try:
         response = requests.post(url, headers=headers, json=data, timeout=20)
     except requests.exceptions.RequestException as err:
-        notification.notify(app_name="Desktop GPT",
-                            title='Error',
-                            message=NETWORK_ERROR_MSG,
-                            app_icon=f'{PATH}/img/error.png',
-                            timeout=TIMEOUT)
+        send_notification({'title': 'Error', 'message': NETWORK_ERROR_MSG, 'icon': 'error'})
         raise SystemExit(err)
 
     result = {'code': response.status_code}
@@ -87,9 +102,9 @@ def read_text_from_image():
     str: The extracted text from the image, with the last character removed.
     """
 
-    img = cv2.imread('/tmp/screenshot.png', 0)
+    img = np.array(Image.open('/tmp/screenshot.png').convert('L'))
     if np.average(img[:img.shape[0] // 10]) < 128:
-        img = cv2.bitwise_not(img)
+        img = 255 - img
     return pytesseract.image_to_string(img, config=r'--oem 3 --psm 6')[:-1]
 
 
@@ -122,11 +137,7 @@ def generate_text(text):
     else:
         note = {'title': 'Error', 'message': NO_RESPONSE_MSG, 'icon': 'error'}
 
-    notification.notify(app_name='Desktop GPT',
-                        title=note["title"],
-                        message=note["message"],
-                        app_icon=f'{PATH}/img/{note["icon"]}.png',
-                        timeout=TIMEOUT)
+    send_notification(note)
 
 
 # PATH = os.getcwd()
@@ -140,15 +151,11 @@ try:
     MAX_TOKENS = config.getint('OPENAI', 'MAX_TOKENS', fallback=16)
     N = config.getint('OPENAI', 'N', fallback=1)
     TEMPERATURE = config.getfloat('OPENAI', 'TEMPERATURE', fallback=1)
-    TIMEOUT = config.getint('NOTIFICATION', 'TIMEOUT', fallback=5)
 except Exception as err:
     message = f'{err} was not found in your configuration file,' \
               f'or it may not have been configured correctly.'
-    notification.notify(app_name="Desktop GPT",
-                        title='Error',
-                        message=message,
-                        app_icon=f'{PATH}/img/error.png',
-                        timeout=10)
+
+    send_notification({'title': 'Error', 'message': message, 'icon': 'error'})
 else:
     ENDPOINT = config.get('OPENAI', 'ENDPOINT', fallback='https://api.openai.com/v1/completions')
     MODEL = config.get('OPENAI', 'MODEL', fallback='text-davinci-002')
