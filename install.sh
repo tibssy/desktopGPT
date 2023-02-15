@@ -67,9 +67,9 @@ package_installer() {
 }
 
 dependencies=""
-dependencies_for_apt="python3-pip binutils xclip tesseract-ocr"
-dependencies_for_pacman="python-pip xclip tesseract tesseract-data-eng"
-dependencies_for_dnf="python3-pip tesseract-langpack-eng"
+dependencies_for_apt="python3-pip python3-virtualenv binutils xclip tesseract-ocr"
+dependencies_for_pacman="python-pip python-virtualenv xclip tesseract tesseract-data-eng"
+dependencies_for_dnf="python3-pip python3-virtualenv xclip tesseract-langpack-eng"
 
 
 echo -e "\n\e[33m***** DesktopGPT Installer *****\e[0m\n\n"
