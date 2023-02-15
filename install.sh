@@ -68,8 +68,8 @@ package_installer() {
 }
 
 python_dependencies=""
-python_dependencies_for_apt="python3-pip binutils xclip tesseract-ocr"
-python_dependencies_for_pacman="python-pip xclip tesseract tesseract-data-eng"
+python_dependencies_for_apt="python3-pip binutils python3-dbus xclip tesseract-ocr"
+python_dependencies_for_pacman="python-pip dbus-python xclip tesseract tesseract-data-eng"
 python_dependencies_for_dnf=""
 
 
