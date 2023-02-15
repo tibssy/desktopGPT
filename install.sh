@@ -38,9 +38,6 @@ builder() {
   pip3 install --upgrade pip
   pip3 install virtualenv
   virtualenv venv
-  echo "\n\n"
-  pwd
-  echo "\n\n"
   source venv/bin/activate
   if [ -n "$VIRTUAL_ENV" ]; then
       echo -e "\e[32mVirtual environment is active.\e[0m"
@@ -71,7 +68,7 @@ package_installer() {
 }
 
 python_dependencies=""
-python_dependencies_for_apt="python3-pip"
+python_dependencies_for_apt="python3-pip binutils"
 python_dependencies_for_pacman="python-pip"
 python_dependencies_for_dnf=""
 
@@ -82,7 +79,8 @@ echo -e "Package manager: \e[32m$package_manager_name\e[0m"
 
 # for apt
 if [ "$package_manager_name" == "apt" ]; then
-  not_installed=($(check_packages $python_dependencies_for_apt))
+  python_dependencies=$python_dependencies_for_apt
+
 
 # For pacman
 elif [ "$package_manager_name" == "pacman" ]; then
