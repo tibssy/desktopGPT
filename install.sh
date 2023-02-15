@@ -62,17 +62,17 @@ builder() {
 
 package_installer() {
   if [ "$package_manager_name" == "apt" ]; then
-    echo -e "sudo apt-get update && sudo apt-get install -y ${not_installed[*]}"
+    sudo apt-get update && sudo apt-get install -y ${not_installed[*]}
   elif [ "$package_manager_name" == "pacman" ]; then
-    sudo pacman -Sy && sudo pacman -S "${not_installed[*]}"
+    sudo pacman -Sy && sudo pacman -S ${not_installed[*]}
   elif [ "$package_manager_name" == "dnf" ]; then
     echo -e "sudo dnf update && sudo dnf -i ${not_installed[*]}"
   fi
 }
 
 python_dependencies=""
-python_dependencies_for_apt="python3-pip virtualenv"
-python_dependencies_for_pacman="python-pip virtualenv"
+python_dependencies_for_apt="python3-pip"
+python_dependencies_for_pacman="python-pip"
 python_dependencies_for_dnf=""
 
 
@@ -108,7 +108,7 @@ if [ ${#not_installed[@]} -gt 0 ]; then
     exit;
   fi
 else
-  echo "call builder"
+  builder
 fi
 
 
