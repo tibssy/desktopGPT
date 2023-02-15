@@ -68,8 +68,8 @@ package_installer() {
 }
 
 python_dependencies=""
-python_dependencies_for_apt="python3-pip binutils"
-python_dependencies_for_pacman="python-pip"
+python_dependencies_for_apt="python3-pip binutils xclip"
+python_dependencies_for_pacman="python-pip xclip"
 python_dependencies_for_dnf=""
 
 
