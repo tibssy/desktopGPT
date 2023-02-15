@@ -41,13 +41,7 @@ builder() {
   source venv/bin/activate
   if [ -n "$VIRTUAL_ENV" ]; then
       echo -e "\e[32mVirtual environment is active.\e[0m"
-
-      if [ "$package_manager_name" == "apt" ]; then
-        pip3 install -r requirements.txt
-      else
-        pip3 install -r requirements_ubuntu.txt
-      fi
-
+      pip3 install -r requirements.txt
       pip3 install pyinstaller
       pip3 freeze
       pyinstaller desktopGPT.spec
