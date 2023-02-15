@@ -41,7 +41,13 @@ builder() {
   source venv/bin/activate
   if [ -n "$VIRTUAL_ENV" ]; then
       echo -e "\e[32mVirtual environment is active.\e[0m"
-      pip3 install -r requirements.txt
+
+      if [ "$package_manager_name" == "apt" ]; then
+        pip3 install -r requirements.txt
+      else
+        pip3 install -r requirements_ubuntu.txt
+      fi
+
       pip3 install pyinstaller
       pip3 freeze
       pyinstaller desktopGPT.spec
@@ -74,6 +80,8 @@ python_dependencies_for_dnf=""
 
 
 echo -e "\n\e[33m***** DesktopGPT Installer *****\e[0m\n\n"
+echo -e "\nWhat desktop environment would you like to use for running DesktopGPT?"
+read -p "(Press G/g for Gnome, or K/k for KDE/Plasma, or B/b for both) " d_env
 package_manager_name=$(get_package_manager)
 echo -e "Package manager: \e[32m$package_manager_name\e[0m"
 
