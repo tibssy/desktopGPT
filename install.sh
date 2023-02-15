@@ -62,14 +62,14 @@ package_installer() {
   elif [ "$package_manager_name" == "pacman" ]; then
     sudo pacman -Sy && sudo pacman -S ${not_installed[*]}
   elif [ "$package_manager_name" == "dnf" ]; then
-    echo -e "sudo dnf update && sudo dnf -i ${not_installed[*]}"
+    echo -e "sudo dnf update && sudo dnf install ${not_installed[*]}"
   fi
 }
 
 dependencies=""
 dependencies_for_apt="python3-pip binutils xclip tesseract-ocr"
 dependencies_for_pacman="python-pip xclip tesseract tesseract-data-eng"
-dependencies_for_dnf=""
+dependencies_for_dnf="python3-pip tesseract-langpack-eng"
 
 
 echo -e "\n\e[33m***** DesktopGPT Installer *****\e[0m\n\n"
