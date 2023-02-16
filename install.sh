@@ -25,7 +25,7 @@ print_not_installed() {
 check_packages() {
   not_installed=""
   for package in "$@"; do
-    if [ "$package_manager_name" == "apt" ] && ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q "^ii"; then
+    if [ "$package_manager_name" == "apt" ] && ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -c "ok installed"; then
       not_installed+=" $package"
     elif [ "$package_manager_name" == "pacman" ] &&  ! pacman -Qi "$package" >/dev/null 2>&1 ; then
       not_installed+=" $package"
