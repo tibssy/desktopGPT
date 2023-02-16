@@ -66,7 +66,8 @@ package_installer() {
   elif [ "$package_manager_name" == "pacman" ]; then
     sudo pacman -Sy && sudo pacman -Sy ${not_installed[*]}
   elif [ "$package_manager_name" == "dnf" ]; then
-    sudo dnf check-update && sudo dnf install -y ${not_installed[*]}
+    sudo dnf check-update
+    sudo dnf install -y ${not_installed[*]}
   fi
 }
 
