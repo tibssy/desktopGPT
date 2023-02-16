@@ -25,7 +25,7 @@ print_not_installed() {
 check_packages() {
   not_installed=""
   for package in "$@"; do
-    if [ "$package_manager_name" == "apt" ] && ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -c "ok installed"; then
+    if [ "$package_manager_name" == "apt" ] && [ $(dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
       not_installed+=" $package"
     elif [ "$package_manager_name" == "pacman" ] &&  ! pacman -Qi "$package" >/dev/null 2>&1 ; then
       not_installed+=" $package"
@@ -75,12 +75,12 @@ dependencies=""
 dependencies_for_apt="python3-pip python3-virtualenv binutils xclip tesseract-ocr"
 dependencies_for_pacman="python-pip python-virtualenv xclip tesseract tesseract-data-eng"
 dependencies_for_dnf="python3-pip python3-virtualenv xclip tesseract-langpack-eng"
-
-
-echo -e "\n\e[33m***** DesktopGPT Installer *****\e[0m\n\n"
-echo -e "\nWhat desktop environment would you like to use for running DesktopGPT?"
-read -p "(Press G/g for Gnome, or K/k for KDE/Plasma, or B/b for both) " d_env
 package_manager_name=$(get_package_manager)
+
+echo -e "\n\e[33m***** DesktopGPT Installer *****\e[0m\n"
+echo -e "\nWhat desktop environment would you like to use for running DesktopGPT?"
+read -p "Do you want to be abel to run it on KDE/Plasma (y/n)? " plasma_support
+read -p "Do you want to be abel to run it on Gnome, Cinnamon, XFCE (y/n)? " other_than_plasma
 echo -e "Package manager: \e[32m$package_manager_name\e[0m"
 
 # for apt
@@ -97,6 +97,13 @@ elif [ "$package_manager_name" == "dnf" ]; then
   dependencies=$dependencies_for_pacman
 fi
 
+if [ "$plasma_support" == "y" ] || [ "$plasma_support" == "Y" ]; then
+  dependencies+=" spectacle"
+fi
+
+if [ "$other_than_plasma" == "y" ] || [ "$other_than_plasma" == "Y" ]; then
+  dependencies+=" gnome-screenshot"
+fi
 
 #
 not_installed=($(check_packages $dependencies))
