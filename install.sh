@@ -97,7 +97,7 @@ elif [ "$package_manager_name" == "pacman" ]; then
 
 # For dnf
 elif [ "$package_manager_name" == "dnf" ]; then
-  dependencies=$dependencies_for_pacman
+  dependencies=$dependencies_for_dnf
 fi
 
 if [ "$plasma_support" == "y" ] || [ "$plasma_support" == "Y" ]; then
