@@ -64,13 +64,16 @@ package_installer() {
   if [ "$package_manager_name" == "apt" ]; then
     sudo apt-get update && sudo apt-get install -y ${not_installed[*]}
   elif [ "$package_manager_name" == "pacman" ]; then
-    sudo pacman -Sy && sudo pacman -S ${not_installed[*]}
+    sudo pacman -Sy && sudo pacman -Sy ${not_installed[*]}
   elif [ "$package_manager_name" == "dnf" ]; then
-    echo -e "sudo dnf update && sudo dnf install ${not_installed[*]}"
+    sudo dnf check-update && sudo dnf install -y ${not_installed[*]}
   fi
 }
 
 
+
+src_folder="./src"
+dst_folder="$(echo $HOME)/.desktopGPT"
 dependencies=""
 dependencies_for_apt="python3-pip python3-virtualenv binutils xclip tesseract-ocr"
 dependencies_for_pacman="python-pip python-virtualenv xclip tesseract tesseract-data-eng"
@@ -122,134 +125,8 @@ else
   builder
 fi
 
-
-
-
-
-
-
-#not_installed=($(check_packages python-pipa virtualenv curl abrakadabra))
-#echo "${not_installed[*]}"
-#if [ ${#not_installed[@]} -gt 0 ]; then
-#    echo "The following packages are not installed: ${not_installed[*]}"
-#    print_not_installed ${not_installed[*]}
-#    echo -e "\n"
-#    read -p "Do you want to install this dependencies (y/n)? " py_dep
-#    if [ "$py_dep" == "y" ] || [ "$py_dep" == "Y" ]; then
-#      echo ${not_installed[*]}
-##      sudo pacman -Sy && sudo pacman -S python-pip ${not_installed[*]}
-#    fi
-#
-#fi
-
-
-
-
-
-
-
-
-
-
-#if [ ! -z $(which pip) ] && [ ! -z $(which virtualenv) ]; then
-#    PIP_VERSION=$(pip --version | awk '{print $2}')
-#    VIRTUALENV_VERSION=$(virtualenv --version | awk '{print $2}')
-#    echo -e "\e[32mpython-pip version $PIP_VERSION and virtualenv version $VIRTUALENV_VERSION are installed"
-#else
-#    echo "python-pip and/or virtualenv are not installed"
-#fi
-#
-#
-#
-#
-#
-#
-#
-#
-#echo -e "The installer will install the following dependencies:\n\n[TO BUILD DESKTOPGPT BINARY]\n\e[32m - python-pip\n - virtualenv\e[0m"
-#
-#
-#read -p "Do you want to continue (y/n)? " dependencies
-#echo -e "\nWhat desktop environment would you like to use for running DesktopGPT?"
-#read -p "(Press G/g for Gnome, or K/k for KDE/Plasma, or B/b for both) " d_env
-#
-#
-#if [ "$dependencies" == "y" ] || [ "$dependencies" == "Y" ]; then
-#  echo "installing"
-#
-#  # For Debian based systems
-#  if which apt-get &> /dev/null; then
-#    to_install="sudo apt-get update && sudo apt-get install -y python3-pip xclip tesseract-ocr"
-#    if [ "$d_env" == "B" ] || [ "$d_env" == "b" ]; then
-#      to_install+=" spectacle gnome-screenshot"
-#    elif [ "$d_env" == "G" ] || [ "$d_env" == "g" ]; then
-#      to_install+=" gnome-screenshot"
-#    elif [ "$d_env" == "K" ] || [ "$d_env" == "k" ]; then
-#      to_install+=" spectacle"
-#    else
-#      echo "It appears that you have not chosen a desktop environment option."
-#      exit;
-#    fi
-#    packages=$(echo "$to_install" | sed 's/.* apt-get install -y //')
-#    formatted=$(echo "$packages" | sed 's/ /\n - /g')
-#    echo -e "The following packages will be installed:\n\e[32m - $formatted\e[0m\n"
-#    eval "$to_install"
-#
-#
-#  # For Arch based systems
-#  elif which pacman &> /dev/null; then
-#    to_install="sudo pacman -Sy && sudo pacman -S python-pip xclip tesseract tesseract-data-eng"
-#    if [ "$d_env" == "B" ] || [ "$d_env" == "b" ]; then
-#      to_install+=" spectacle gnome-screenshot"
-#    elif [ "$d_env" == "G" ] || [ "$d_env" == "g" ]; then
-#      to_install+=" gnome-screenshot"
-#    elif [ "$d_env" == "K" ] || [ "$d_env" == "k" ]; then
-#      to_install+=" spectacle"
-#    else
-#      echo "It appears that you have not chosen a desktop environment option."
-#      exit;
-#    fi
-#    packages=$(echo "$to_install" | sed 's/.* sudo pacman -S //')
-#    formatted=$(echo "$packages" | sed 's/ /\n - /g')
-#    echo -e "The following packages will be installed:\n\e[32m - $formatted\e[0m\n"
-#    eval "$to_install"
-#
-#
-#  # For Fedora spins
-#  elif which dnf &> /dev/null; then
-#    echo "dnf install"
-#  else
-#    echo "Sorry, but your system is either unsupported or your package manager type could not be found."
-#  fi
-#else
-#  echo "Dependencies will not be installed."
-#fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#if [ -d "$dst_folder" ]; then
+#  read -p "Destination directory already exists. Do you want to continue? (y/n) " destenation
 
 
 
