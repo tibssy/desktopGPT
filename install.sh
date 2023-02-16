@@ -25,7 +25,11 @@ print_not_installed() {
 check_packages() {
   not_installed=""
   for package in "$@"; do
-    if ! which "$package" &>/dev/null; then
+    if [ "$package_manager_name" == "apt" ] && ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q "^ii"; then
+      not_installed+=" $package"
+    elif [ "$package_manager_name" == "pacman" ] &&  ! pacman -Qi "$package" >/dev/null 2>&1 ; then
+      not_installed+=" $package"
+    elif [ "$package_manager_name" == "dnf" ] && ! dnf list installed "$package" >/dev/null 2>&1 ; then
       not_installed+=" $package"
     fi
   done
@@ -65,6 +69,7 @@ package_installer() {
     echo -e "sudo dnf update && sudo dnf install ${not_installed[*]}"
   fi
 }
+
 
 dependencies=""
 dependencies_for_apt="python3-pip python3-virtualenv binutils xclip tesseract-ocr"
