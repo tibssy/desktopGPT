@@ -144,7 +144,7 @@ main() {
         exit 1
       fi
     else
-      echo -e "\e[31mWithout this dependencies you are not abel to build DesktopGPT\e[0m"
+      echo -e "\e[31mYou cannot build DesktopGPT without these dependencies.\e[0m"
       exit;
     fi
   fi
