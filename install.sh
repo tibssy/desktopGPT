@@ -159,7 +159,7 @@ dst_folder="$(echo $HOME)/.desktopGPT"
 declare -A commands
 commands["apt"]="sudo apt-get update && sudo apt-get install -y"
 commands["pacman"]="sudo pacman -Sy"
-commands["dnf"]="sudo dnf check-update sudo dnf install -y"
+commands["dnf"]="sudo dnf install -y"
 
 declare -A packages
 packages["apt"]="python3-pip python3-virtualenv binutils xclip tesseract-ocr"
