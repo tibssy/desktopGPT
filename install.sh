@@ -104,7 +104,7 @@ add_key() {
           echo -e "\n[OPENAI]\nAPI_KEY = $api_key" >> "$dst_folder/config.ini"
         fi
       fi
-      echo "API key added/replaced in config.ini successfully."
+      echo -e "\n\e[32mAPI key added/replaced in $dst_folder/config.ini successfully.\e[0m"
     else
       echo -e "\n\e[31mNo API key has been provided. You can add it later in the $dst_folder/config.ini file.\e[0m"
     fi
