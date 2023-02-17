@@ -49,7 +49,6 @@ builder() {
       pip3 install --upgrade pip
       pip3 --version
       echo -e "\n\e[32mInstall Requirements\n********************\e[0m"
-      pip3 --version
       pip3 install -r requirements.txt
       pip3 install pyinstaller
       echo -e "\n\e[32mBuild Binary\n************\e[0m"
