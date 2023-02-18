@@ -10,28 +10,30 @@ You can install DesktopGPT using the provided installation script. The script in
 <h3>Using the installation script:</h3>
 
 ```Bash
+git clone https://github.com/tibssy/desktopGPT.git
+cd desktopGPT
 ./install.sh
 ```
-The binary will be located in ~/.desktopGPT/
+The script will install all the necessary dependencies, build the binary and prompt you for your OpenAI API key. Once the installation is complete, the binary and the config file will be located in ~/.desktopGPT
 
 Please note that the installation script has been tested on Manjaro, Arch, Ubuntu, Linux Mint, and Fedora. Alternatively, you can manually install the dependencies using the package manager of your Linux distribution.
 <br>
 <br>
 <h3>Manual installation:</h3>
 <br>
-For Apt package manager:
+For Debian/Ubuntu-based systems:
 
 ```bash
 sudo apt-get update && sudo apt-get install -y python3-pip python3-virtualenv binutils xclip tesseract-ocr
 ```
 <br>
-For Pacman package manager:
+For Arch-based systems:
 
 ```bash
 sudo pacman -Sy python-pip python-virtualenv xclip tesseract tesseract-data-eng
 ```
 <br>
-For Dnf package manager:
+For Fedora-based systems:
 
 ```bash
 sudo dnf install -y python3-pip python3-virtualenv xclip tesseract-langpack-eng
@@ -40,6 +42,10 @@ sudo dnf install -y python3-pip python3-virtualenv xclip tesseract-langpack-eng
 Once the dependencies are installed, you can install the app by running the following command in a virtualenv:
 
 ```bash
+git clone https://github.com/tibssy/desktopGPT.git
+cd desktopGPT/src
+virtualenv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
@@ -49,6 +55,14 @@ You can optionally create a binary of the app using pyinstaller by running the f
 pip3 install pyinstaller
 pyinstaller desktopGPT.spec
 ```
+
+<br>
+<h2>Getting your OpenAI API key</h2>
+
+To use desktopGPT, you'll need an API key from OpenAI. If you don't already have one, you can sign up for a free account https://platform.openai.com/account/api-keys. Once you have an account, you can create an API key from your dashboard.
+
+The installation script for desktopGPT will prompt you for your OpenAI API key at the end of the installation process, and will store it in the configuration file located in ~/.desktopGPT/config.ini. 
+
 
 <br>
 <h2>Usage</h2>
