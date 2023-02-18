@@ -20,6 +20,8 @@ Please note that the installation script has been tested on Manjaro, Arch, Ubunt
 <br>
 <br>
 <h3>Manual installation:</h3>
+For KDE/Plasma, make sure to add "spectacle" to your dependencies, and for GNOME/Cinnamon/Xfce, add "gnome-screenshot". These package names are the same for all three package managers: pacman, apt, and dnf.
+<br>
 <br>
 For Debian/Ubuntu-based systems:
 
