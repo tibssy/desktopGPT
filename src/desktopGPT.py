@@ -150,7 +150,7 @@ try:
     API_KEY = config['OPENAI']['API_KEY']
     MAX_TOKENS = config.getint('OPENAI', 'MAX_TOKENS', fallback=16)
     N = config.getint('OPENAI', 'N', fallback=1)
-    TEMPERATURE = config.getfloat('OPENAI', 'TEMPERATURE', fallback=1)
+    TEMPERATURE = config.getfloat('OPENAI', 'TEMPERATURE', fallback=0.5)
 except Exception as err:
     message = f'{err} was not found in your configuration file,' \
               f'or it may not have been configured correctly.'
