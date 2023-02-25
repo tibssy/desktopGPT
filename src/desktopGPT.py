@@ -21,7 +21,6 @@ import clipboard
 from notifypy import Notify
 
 
-
 def send_notification(note):
     """
     Sends a desktop notification with the given title, message, and icon.
@@ -82,8 +81,7 @@ def take_screenshot():
     None
     """
 
-    desktop = os.environ.get('DESKTOP_SESSION')
-    if 'plasma' in desktop:
+    if 'plasma' in DESKTOP_ENV:
         subprocess.call(['spectacle', '-rbno', '/tmp/screenshot.png'])
     else:
         subprocess.call(['gnome-screenshot', '-af', '/tmp/screenshot.png'])
@@ -108,6 +106,56 @@ def read_text_from_image():
     return pytesseract.image_to_string(img, config=r'--oem 3 --psm 6')[:-1]
 
 
+def raw_to_notify_clip_data(text_in, raw_text):
+    """
+    Extracts structured data from a raw text string and formats it
+    for clipboard and notification messages.
+
+    Args:
+        text_in (str): The original user input text.
+        raw_text (str): The raw text string to extract data from.
+
+    Returns:
+        A dictionary with two keys:
+        - 'notify_msg': A dictionary with keys 'title', 'message', and 'icon' to display a notification.
+        - 'clipboard_msg': A formatted string to copy to the clipboard.
+
+    The function looks for the first occurrence of the string 'Title' in the raw text, then extracts
+    categories and values until the next 'Title' or the end of the string. The resulting dictionary
+    is used to populate the notification.
+    """
+
+    start_point = raw_text.find('Title')
+
+    if start_point != -1:
+        keys = [category.strip('"') for category in CATEGORIES.split(', ')]
+
+        cleaned_text = raw_text[start_point:].strip()
+        indices = [cleaned_text.find(key) for key in keys if key in cleaned_text]
+        dict_text = dict([cleaned_text[i:j].split(':', 1) for i, j in zip(indices, indices[1:] + [None])])
+
+        title = dict_text.pop('Title', 'About').strip()
+        reference = dict_text.pop('Reference', '').strip()
+        reference_title = dict_text.pop('Reference Title', title).strip()
+        msg = ''.join(f' - {key.strip()}:\n{value.strip()}\n\n' for key, value in dict_text.items())
+
+        clipboard_msg = f' - Question:\n{text_in}\n\n - Title:\n{title}\n\n{msg}'
+        notify_msg = {'title': title, 'message': f'{msg}', 'icon': 'desktopGPT'}
+
+        if reference:
+            clipboard_msg += f' - Reference:\n{reference}'
+            if 'plasma' in DESKTOP_ENV and '\n' not in reference and '\n' not in reference_title:
+                reference = f'<a href="{reference}">{reference_title}</a>'
+
+            notify_msg['message'] += f'\n - Reference:\n{reference}'
+
+    else:
+        clipboard_msg = f' - Question:\n{text_in}\n\n {raw_text}'
+        notify_msg = {'title': 'About', 'message': f'{raw_text}', 'icon': 'desktopGPT'}
+
+    return {'notify_msg': notify_msg, 'clipboard_msg': clipboard_msg}
+
+
 def generate_text(text):
     """
     Generates text response for a given prompt using API and displays a notification.
@@ -115,8 +163,8 @@ def generate_text(text):
     Returns:
     None
     """
-
-    prompt = f'{INSTRUCTION}\n{text}'
+    categories = f'"Title", {RESPONSE_KEYS}, "Reference", "Reference Title"'
+    prompt = f'{INSTRUCTION} {categories}\n{text}'
     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {API_KEY}'}
     data = {'prompt': prompt,
             'model': MODEL,
@@ -127,21 +175,15 @@ def generate_text(text):
 
     result = post_request(url=ENDPOINT, headers=headers, data=data)
     json_data = result.get('json')
+    print(f'json_data:\n{json_data}')
 
     if json_data:
-        string = json_data['choices'][0]['text'].strip()
-        clipboard.copy(f'Question:\n{text}\n\n{string}')
-        string = string.replace(':\n', ': ')
-        title, msg = string.split('\n', 1)
-        note = {'title': title, 'message': msg, 'icon': 'desktopGPT'}
-    else:
-        note = {'title': 'Error', 'message': NO_RESPONSE_MSG, 'icon': 'error'}
-
-    send_notification(note)
+        return json_data['choices'][0]['text']
 
 
 # PATH = os.getcwd()
 PATH = os.path.dirname(sys.executable)
+DESKTOP_ENV = os.environ.get('DESKTOP_SESSION')
 
 
 try:
@@ -160,9 +202,20 @@ else:
     ENDPOINT = config.get('OPENAI', 'ENDPOINT', fallback='https://api.openai.com/v1/completions')
     MODEL = config.get('OPENAI', 'MODEL', fallback='text-davinci-002')
     STOP = config.get('OPENAI', 'STOP', fallback=None)
-    INSTRUCTION = config.get('OPENAI', 'INSTRUCTION', fallback='')
+    RESPONSE_KEYS = config.get('OPENAI', 'RESPONSE_KEYS', fallback='"About"')
     NETWORK_ERROR_MSG = config.get('NOTIFICATION', 'NETWORK_ERROR_MSG', fallback='Network Error Occurred')
     NO_RESPONSE_MSG = config.get('NOTIFICATION', 'NO_RESPONSE_MSG', fallback='')
 
+    INSTRUCTION = 'Separate your answer based on these keys:'
+    CATEGORIES = f'"Title", {RESPONSE_KEYS}, "Reference", "Reference Title"'
+
     take_screenshot()
-    generate_text(read_text_from_image())
+    question = read_text_from_image()
+    answer = generate_text(question)
+
+    if answer:
+        data_out = raw_to_notify_clip_data(question, answer)
+        send_notification(data_out.get('notify_msg'))
+        clipboard.copy(data_out.get('clipboard_msg'))
+    else:
+        send_notification({'title': 'Error', 'message': NO_RESPONSE_MSG, 'icon': 'error'})

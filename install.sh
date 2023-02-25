@@ -80,6 +80,7 @@ finalize() {
   fi
 
   cp -r "$(pwd)/img" "$(pwd)/dist/desktopGPT" "$(pwd)/config.ini" "$dst_folder"
+  add_desktop_file
   chmod +x "$dst_folder/desktopGPT"
   echo -e "\n\e[32mDesktopGPT Successfully Installed to $dst_folder.\n***********************************************\e[0m\n"
 
@@ -110,6 +111,15 @@ add_key() {
   else
     echo -e "\n\e[31mNo API key has been provided. You can add it later in the $dst_folder/config.ini file.\e[0m"
   fi
+}
+
+
+add_desktop_file() {
+  desktop_launcher_folder="$(echo $HOME)/.local/share/applications"
+  cp "$(pwd)/desktopGPT.desktop" "$desktop_launcher_folder"
+  sed -i "/Exec/c Exec=$dst_folder/desktopGPT" "$desktop_launcher_folder/desktopGPT.desktop"
+  sed -i "/Icon/c Icon=$dst_folder/img/desktopGPT.png" "$desktop_launcher_folder/desktopGPT.desktop"
+  chmod +x "$desktop_launcher_folder/desktopGPT.desktop"
 }
 
 
