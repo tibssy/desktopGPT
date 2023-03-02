@@ -135,7 +135,7 @@ def raw_to_notify_clip_data(text_in, raw_text):
         dict_text = dict([cleaned_text[i:j].split(':', 1) for i, j in zip(indices, indices[1:] + [None])])
 
         title = dict_text.pop('Title', 'About').strip()
-        reference = dict_text.pop('Reference', '').strip()
+        reference = dict_text.pop('Reference URL', '').strip()
         reference_title = dict_text.pop('Reference Title', title).strip()
         msg = ''.join(f' - {key.strip()}:\n{value.strip()}\n\n' for key, value in dict_text.items())
 
@@ -163,22 +163,27 @@ def generate_text(text):
     Returns:
     None
     """
-    categories = f'"Title", {RESPONSE_KEYS}, "Reference", "Reference Title"'
+
+    categories = f'"Title", {RESPONSE_KEYS}, "Reference URL", "Reference Title"'
     prompt = f'{INSTRUCTION} {categories}\n{text}'
     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {API_KEY}'}
-    data = {'prompt': prompt,
-            'model': MODEL,
-            'max_tokens': MAX_TOKENS,
-            'n': N,
-            'stop': STOP,
-            'temperature': TEMPERATURE}
+
+    if MODEL == 'gpt-3.5-turbo':
+        data = {'messages': [{"role": "user", "content": prompt}], 'model': MODEL}
+    else:
+        data = {'prompt': prompt,
+                'model': MODEL,
+                'max_tokens': MAX_TOKENS,
+                'n': N,
+                'stop': STOP,
+                'temperature': TEMPERATURE}
 
     result = post_request(url=ENDPOINT, headers=headers, data=data)
     json_data = result.get('json')
-    print(f'json_data:\n{json_data}')
 
     if json_data:
-        return json_data['choices'][0]['text']
+        choices = json_data['choices']
+        return choices[0]['message']['content'] if MODEL == 'gpt-3.5-turbo' else choices[0]['text']
 
 
 # PATH = os.getcwd()
