@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Desktop-GPT
+Comment=This application allows you to capture a screenshot of a chosen area and send the extracted text to OpenAI in order to receive a response.
+Exec=
+Icon=
+Terminal=false
+Type=Application
+Categories=Utility;
